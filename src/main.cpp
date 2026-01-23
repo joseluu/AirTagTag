@@ -271,9 +271,15 @@ class CustomAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks {
         airtagDistance[address] = distance;
         airtagLastSeen[address] = millis(); // Track when device was last seen
         
-        // Track Sato reacquired time if it was previously lost
+        // Track Sato reacquired/initial acquisition time
         if (address == SATO_MAC) {
-          if (satoLastLost > 0 && satoLastReacquired < satoLastLost) {
+          // On initial acquisition (first time seeing Sato)
+          if (airtagCounts.find(address) == airtagCounts.end()) {
+            satoLastReacquired = time(nullptr); // Set on first detection
+            Serial.printf("Sato signal initially acquired at: %s\n", formatTime(satoLastReacquired).c_str());
+          }
+          // On reacquisition (after being lost)
+          else if (satoLastLost > 0 && satoLastReacquired < satoLastLost) {
             satoLastReacquired = time(nullptr); // Update when signal was reacquired
             Serial.printf("Sato signal reacquired at: %s\n", formatTime(satoLastReacquired).c_str());
           }

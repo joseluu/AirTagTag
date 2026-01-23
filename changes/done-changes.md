@@ -146,3 +146,27 @@ Change 8
      - yPos is incremented by 12 regardless of whether reacquisition info exists
      - Other devices only start displaying from line 3 onwards
      - When no reacquisition has occurred, line 2 remains blank
+
+Change 9
+
+   Initial Acquisition Handling
+
+     - When Sato is first detected (initial acquisition), satoLastReacquired is now set immediately
+     - This causes the second line to display "in: HH:MM:SS" right from the first detection, just like when it's reacquired after being lost
+     - Added serial logging for initial acquisition: "Sato signal initially acquired at: HH:MM:SS"
+
+   Logic Flow:
+
+     - First Detection (initial acquisition):
+       - Check if airtagCounts[SATO_MAC] doesn't exist yet
+       - Set satoLastReacquired = time(nullptr)
+       - Display "in: HH:MM:SS" on second line
+     - Reacquisition (after being lost):
+       - Check if satoLastLost > 0 and satoLastReacquired < satoLastLost
+       - Set satoLastReacquired = time(nullptr)
+       - Display "in: HH:MM:SS" on second line
+     - Display Behavior:
+       - Line 1: Sato status (RSSI/distance or "out: HH:MM:SS")
+       - Line 2: "in: HH:MM:SS" (from first detection onwards)
+       - Line 3+: Other devices
+

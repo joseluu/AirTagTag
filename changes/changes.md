@@ -20,3 +20,5 @@ The time of day shown is UTC, the device is in France so it should display CET t
 and on the web page to display the time when the signal was reacquired prefixed by "in: ". Change mDNS name to be mysato.local
 ## 8. Display issue
 Never use the second line for devices display, if there has not been any reacquisition, leave a blank line.
+## 9. Display initial
+Upon initial acquisition of the signal, display as if it was reacquired, that is use the second line with prefix "in: "
