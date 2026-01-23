@@ -1,4 +1,11 @@
 # AirTagTag
+
+This is a derivative of the AirTagTag project. It uses an EPS32 with a small oled display, detects the AirTag weared by my cat, 
+displays its distance from the device or if the cat is out displays when it lost contact. When the cat is back in it displays the time in.
+
+
+------------------------------------  initial project readme ---------------------------------------------------------
+
 ESP32 AirTag Detector with Captive Portal -  Apple AirTag detection system using an ESP32. Bluetooth Low Energy (BLE) scans / detects AirTags and other BLE devices, CAPTIVE PORTAL hosted by the ESP32. Dynamic updates, trends based on RSSI values device names and distances.
 
 Key Features:
