@@ -130,3 +130,19 @@ Change 7
 
      - Added detection for when Sato signal is lost (after 5-minute timeout)
      - Logs signal loss time to serial console
+
+Change 8
+   Display Layout Fix
+
+     - Line 1: Sato device information (RSSI/distance when online, "out: HH:MM:SS" when offline)
+     - Line 2: Exclusively reserved for Sato reacquisition time
+       - Shows "in: HH:MM:SS" when Sato signal is reacquired
+       - Blank if no reacquisition yet (no other devices shown here)
+     - Line 3+: Other detected devices (never uses line 2)
+
+   Key Implementation Details:
+
+     - Second line is always reserved for Sato reacquisition time
+     - yPos is incremented by 12 regardless of whether reacquisition info exists
+     - Other devices only start displaying from line 3 onwards
+     - When no reacquisition has occurred, line 2 remains blank

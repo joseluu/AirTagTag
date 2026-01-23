@@ -11,3 +11,12 @@ In case of failure, report it on the oled display, wait 5 seconds and restart th
 ## 4. advertise service with mDns
 Do not force ip address to 192.168.11.29 but use address given by dhcp when connecting to the router to advertise it via mDNS
 Force web browser to refresh every 15s
+## 5. fix for TTGO devices
+TTGO devices have a led backlight signal on pin 14, activate the backlight
+## 6. Signal sato
+Track time of day, use the ntp protocol to initialize time of day, make sure the internal time of day does not drift by ensuring that ntp is called at least once per day, do it explicitly unless the NTP library does it itself. Reserve the first line of the display as well as the first line of web page to device d6:e8:3b:00:e1:4f, name this device "Sato" on the display and "Satoshi" on the web page. If device is not to be located for 5 minutes, replace rssi and distance by the time at which the signal was lost prefixed by "out: "
+## 7. Time issues
+The time of day shown is UTC, the device is in France so it should display CET time fix time display. Reserve a second line on the display
+and on the web page to display the time when the signal was reacquired prefixed by "in: ". Change mDNS name to be mysato.local
+## 8. Display issue
+Never use the second line for devices display, if there has not been any reacquisition, leave a blank line.
