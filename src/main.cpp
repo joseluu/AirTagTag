@@ -4,8 +4,12 @@
 #include <BLEAdvertisedDevice.h>
 #include <WiFi.h>
 #include <ESPAsyncWebServer.h>
+#include <U8g2lib.h>
 #include <unordered_map>
 #include <map>
+
+// OLED display for WiFi Kit (SSD1306 on I2C pins 4 and 5)
+U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ 16, /* clock=*/ 15, /* data=*/ 4);
 
 BLEScan* pBLEScan;
 AsyncWebServer server(80);
@@ -16,6 +20,8 @@ std::unordered_map<std::string, int> airtagRSSI;   // To store AirTag RSSI value
 std::unordered_map<std::string, String> airtagTrend; // To store AirTag trends (increasing, decreasing, stable)
 std::unordered_map<std::string, String> airtagDetails; // To store additional AirTag details
 bool isScanning = false; // Flag to indicate scanning state
+unsigned long lastDisplayUpdate = 0; // For updating OLED periodically
+const unsigned long DISPLAY_UPDATE_INTERVAL = 1000; // Update display every second
 
 // Function to estimate distance based on RSSI
 float calculateDistance(int rssi) {
@@ -29,6 +35,44 @@ float calculateDistance(int rssi) {
   } else {
     return (0.89976) * pow(ratio, 7.7095) + 0.111;
   }
+}
+
+// Function to update OLED display with BLE devices summary
+void updateOLEDDisplay() {
+  u8g2.clearBuffer();
+  u8g2.setFont(u8g2_font_ncenB08_tr);
+  
+  int deviceCount = airtagCounts.size();
+  
+  // Display header
+  u8g2.drawStr(0, 10, "BLE Devices");
+  
+  if (deviceCount == 0) {
+    u8g2.drawStr(0, 25, "Scanning...");
+    u8g2.drawStr(0, 40, "No devices found");
+  } else {
+    char buffer[128];
+    snprintf(buffer, sizeof(buffer), "Found: %d device(s)", deviceCount);
+    u8g2.drawStr(0, 25, buffer);
+    
+    // Display first 3 devices with RSSI
+    int displayCount = 0;
+    int yPos = 40;
+    for (const auto& entry : airtagCounts) {
+      if (displayCount >= 3) break;
+      
+      int rssi = airtagRSSI[entry.first];
+      String addr = String(entry.first.c_str());
+      addr = addr.substring(addr.length() - 5); // Show last 5 chars of MAC
+      
+      snprintf(buffer, sizeof(buffer), "%s: %d dBm", addr.c_str(), rssi);
+      u8g2.drawStr(0, yPos, buffer);
+      yPos += 12;
+      displayCount++;
+    }
+  }
+  
+  u8g2.sendBuffer();
 }
 
 // Custom callback to handle detected devices
@@ -85,7 +129,15 @@ class CustomAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks {
 
 void setup() {
   Serial.begin(115200);
-  Serial.println("Starting BLE Scanner...");
+  Serial.println("Starting BLE Scanner with OLED Display...");
+  
+  // Initialize OLED display
+  u8g2.begin();
+  u8g2.clearBuffer();
+  u8g2.setFont(u8g2_font_ncenB08_tr);
+  u8g2.drawStr(0, 15, "Initializing...");
+  u8g2.sendBuffer();
+  
   BLEDevice::init("ESP32_BLE_Scanner");
   pBLEScan = BLEDevice::getScan();
   pBLEScan->setAdvertisedDeviceCallbacks(new CustomAdvertisedDeviceCallbacks());
@@ -95,10 +147,18 @@ void setup() {
 
   // Initialize WiFi for Captive Portal
   WiFi.softAP("ESP32-BLE-Portal");
+  WiFi.softAPConfig(IPAddress(192, 168, 11, 29), IPAddress(192, 168, 11, 29), IPAddress(255, 255, 255, 0));
   delay(100);
 
+  // Display IP on OLED
+  u8g2.clearBuffer();
+  u8g2.setFont(u8g2_font_ncenB08_tr);
+  u8g2.drawStr(0, 15, "WiFi AP Started");
+  u8g2.drawStr(0, 30, "IP: 192.168.11.29");
+  u8g2.sendBuffer();
+  
   // Open captive portal automatically
-  Serial.printf("AP IP Address: http://%s\n", WiFi.softAPIP().toString().c_str());
+  Serial.printf("AP IP Address: http://192.168.11.29\n");
 
   // Define Captive Portal Content
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
@@ -144,5 +204,10 @@ void setup() {
 }
 
 void loop() {
-  // No actions  required in loop as scanning is handled in a separate task
+  // Update OLED display periodically
+  unsigned long currentTime = millis();
+  if (currentTime - lastDisplayUpdate >= DISPLAY_UPDATE_INTERVAL) {
+    updateOLEDDisplay();
+    lastDisplayUpdate = currentTime;
+  }
 }
