@@ -228,3 +228,66 @@ Key Features:
 
 All features from previous changes (Change 1-9) are preserved and work with multiple cats.
 Build completed successfully with no errors.
+
+Change 11
+
+README.md Rewrite - Cat Home Presence Tracker
+
+I've completely rewritten the README.md file to account for all features implemented through paragraph 10.
+
+Structure:
+
+1. New Project Header & Purpose
+   - Title: "AirTagTag - Cat Home Presence Tracker"
+   - Clear statement: "Project Repurposing: This project has been repurposed to track when cats are at home and when they have left home"
+
+2. Overview Section
+   - Describes the system as ESP32-based cat presence tracking using AirTags
+
+3. Comprehensive Key Features Section
+   - Multi-Cat Support: Configuration in airtag_customisation.h
+   - Real-Time Presence Detection: 5-minute timeout mechanism
+   - OLED Display: Line allocation (1=primary cat, 2=reacquisition/loss time, 3+=others)
+   - Signal Trend Tracking: +/- indicators with explanations
+   - Distance Estimation: In meters with 1 decimal
+   - Time Tracking: NTP sync, timezone, DST support
+   - WiFi Router Integration: DHCP, mDNS, error handling
+   - Web Interface: Auto-refresh, color-coded trends
+   - Device Information: RSSI, distance, trends, service info
+
+4. Hardware Requirements
+   - Lists ESP32 board, OLED display, AirTags
+   - Mentions TTGO compatibility
+
+5. Setup Instructions
+   - Hardware wiring details (SDA/SCL/GND/VCC pins)
+   - Configuration steps for network_creds.h
+   - Configuration steps for airtag_customisation.h with example
+   - Timezone configuration
+   - Build and flash instructions
+   - Usage walkthrough
+
+6. Advanced Features
+   - Detailed tracking behavior explanation
+   - Serial logging information
+   - Instructions for adding more cats
+
+7. Technical Details
+   - BLE scanning parameters
+   - Time synchronization details
+   - Web server specifics
+
+8. Dependencies Section
+   - Updated with all used libraries and versions
+
+9. Troubleshooting Section
+   - WiFi connection issues
+   - OLED display issues
+   - AirTag detection issues
+   - Time sync issues
+
+10. Separator & Original README
+    - Added "---------- initial project readme ----------"
+    - Original readme content preserved unchanged
+
+All features from changes 1-10 are now documented with clear, user-friendly explanations.

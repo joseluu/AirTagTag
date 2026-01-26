@@ -24,4 +24,10 @@ Never use the second line for devices display, if there has not been any reacqui
 Upon initial acquisition of the signal, display as if it was reacquired, that is use the second line with prefix "in: "
 ## 10. Generalize for other cats
 Add a airtag_customisation.h file to hold the cat name, short name, cat MAC and local timezone (CET in our case), use these informations to customize the code.
+## 11. Update the README.md
+The README.md file of the project directory is taken from the initial open source project and is divided into 2 parts
+separated by "----------  initial project readme ----------". The second part is the initial readme file of the
+original project and it should be kept unchanged. Rewrite the first part of the README.md file to account for
+all the features that have been added up to paragraph 10. Mention first that the project has been repurposed to
+track when cats are at home and when they left home.
 
