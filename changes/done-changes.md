@@ -170,3 +170,61 @@ Change 9
        - Line 2: "in: HH:MM:SS" (from first detection onwards)
        - Line 3+: Other devices
 
+Change 10
+
+Generalized Cat Configuration System
+
+I've successfully implemented paragraph 10 by creating a generalized configuration system that supports multiple cats. This replaces the hardcoded "Sato" logic with a flexible, configurable approach.
+
+Key Features:
+
+1. New airtag_customisation.h Header File
+
+   - Created include/airtag_customisation.h with:
+     - CatConfig structure containing:
+       - macAddress: MAC address of the AirTag
+       - displayName: Short name for OLED (e.g., "Sato")
+       - webName: Full name for web page (e.g., "Satoshi")
+       - timeoutMs: Time before marking device as lost (default: 300000 = 5 minutes)
+     - CATS vector: Array of configured cats (starting with Sato)
+     - Timezone configuration: GMT_OFFSET_SEC and DAYLIGHT_OFFSET_SEC
+     - getCatByMAC(): Lookup function for cat by MAC address
+     - getMDNSHostname(): Generates mDNS hostname from first cat name
+
+2. Main Code Generalizations
+
+   - Replaced hardcoded SATO_MAC with dynamic cat tracking
+   - Changed satoLastLost/satoLastReacquired to catLastLost/catLastReacquired (maps by MAC)
+   - Updated updateOLEDDisplay() to:
+     - Display up to 2 configured cats on lines 1-2 (with their reacquisition times)
+     - Show other detected devices from line 3 onwards
+   - Updated setupMDNS() to use getMDNSHostname() from config
+   - Updated syncNTP() to use GMT_OFFSET_SEC and DAYLIGHT_OFFSET_SEC from config
+   - Updated loop() to track signal loss for all configured cats
+   - Updated web server routes to handle multiple cats dynamically
+
+3. Usage - Adding More Cats
+
+   Users can easily add more cats to airtag_customisation.h:
+
+   const std::vector<CatConfig> CATS = {
+     {
+       .macAddress = "d6:e8:3b:00:e1:4f",
+       .displayName = "Sato",
+       .webName = "Satoshi",
+       .timeoutMs = 300000
+     },
+     {
+       .macAddress = "aa:bb:cc:dd:ee:ff",
+       .displayName = "Milo",
+       .webName = "Milo",
+       .timeoutMs = 300000
+     }
+   };
+
+4. Timezone Customization
+
+   Users can change timezone by modifying GMT_OFFSET_SEC and DAYLIGHT_OFFSET_SEC in airtag_customisation.h
+
+All features from previous changes (Change 1-9) are preserved and work with multiple cats.
+Build completed successfully with no errors.

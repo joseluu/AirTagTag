@@ -22,3 +22,6 @@ and on the web page to display the time when the signal was reacquired prefixed 
 Never use the second line for devices display, if there has not been any reacquisition, leave a blank line.
 ## 9. Display initial
 Upon initial acquisition of the signal, display as if it was reacquired, that is use the second line with prefix "in: "
+## 10. Generalize for other cats
+Add a airtag_customisation.h file to hold the cat name, short name, cat MAC and local timezone (CET in our case), use these informations to customize the code.
+
