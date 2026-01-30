@@ -30,4 +30,7 @@ separated by "----------  initial project readme ----------". The second part is
 original project and it should be kept unchanged. Rewrite the first part of the README.md file to account for
 all the features that have been added up to paragraph 10. Mention first that the project has been repurposed to
 track when cats are at home and when they left home.
-
+## 12. Change MAC
+Change the cat MAC address to E3:ED:26:C7:83:C4
+## 13. support legacy trackers
+support tracking a legacy tracker identified by LE General Discoverable and BR/EDR Not Supported flags

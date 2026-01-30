@@ -20,7 +20,7 @@ struct CatConfig {
 // Define cats with their AirTag MAC addresses and names
 const std::vector<CatConfig> CATS = {
   {
-    .macAddress = "d6:e8:3b:00:e1:4f",
+    .macAddress = "e3:ed:26:c7:83:c4",  // lower case
     .displayName = "Sato",
     .webName = "Satoshi",
     .timeoutMs = 300000

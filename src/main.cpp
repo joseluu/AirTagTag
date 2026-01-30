@@ -258,13 +258,32 @@ void setupMDNS() {
 // Custom callback to handle detected devices
 class CustomAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks {
   void onResult(BLEAdvertisedDevice advertisedDevice) {
+    // Legacy tracker detection workaround: check manufacturer data for known legacy patterns
+    std::string manufacturerData = advertisedDevice.getManufacturerData();
+    // TODO: For full support, patch BLE library to expose raw advertisement data and flags
+    if (manufacturerData.length() > 0) {
+      // Example: check for known legacy tracker signature (customize as needed)
+      if (manufacturerData.find("tkr") != std::string::npos) {
+        Serial.printf("TrackR tracker detected (manufacturer data): %s\n", advertisedDevice.getAddress().toString().c_str());
+        // Optionally add to display or tracking logic here
+      }
+    }
+    // Existing AirTag and BLE device logic below...
+
     std::string address = advertisedDevice.getAddress().toString();
     String details = "";
 
+    Serial.printf("Address Detected - Address: %s \n", 
+                      address.c_str());
     // Check for AirTag using manufacturer data
     if (advertisedDevice.haveManufacturerData()) {
       std::string manufacturerData = advertisedDevice.getManufacturerData();
-      if (manufacturerData.size() > 2 && manufacturerData[0] == 0x4C && manufacturerData[1] == 0x00) {
+          Serial.printf("Address with manufacturer data - Address: %s md: %d %d\n", 
+                      address.c_str(), (uint8_t)manufacturerData[0], (uint8_t)manufacturerData[1]);
+      if (manufacturerData.size() > 2 && 
+          (manufacturerData[0] == 0x4C || // apple
+            manufacturerData[0] == 0x00) && // TrackR bravo
+            manufacturerData[1] == 0x00) {
         int rssi = advertisedDevice.getRSSI();
         float distance = calculateDistance(rssi);
 
